@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from requests.exceptions import ChunkedEncodingError
 import time
 import os
+from googletrans import Translator
 
 
 # Read Excel file without headers
@@ -91,10 +92,24 @@ def scrape_and_process_faraazin_with_selenium(word, word_number):
         if driver:
             driver.quit()
 
+# Function to scrape content using Google Translate
+def scrape_and_process_google_translate(word, word_number):
+    translator = Translator()
+
+    try:
+        translation = translator.translate(word, src='en', dest='fa')
+        translated_text = translation.text
+        print(f"Word {word_number}: '{word}' translated by Google Translate: '{translated_text}'")
+        return translated_text
+    except Exception as e:
+        return f'Error in Google Translate: {e}'
+
 
 # Process each word and store results in the second and third columns
-df['Processed_Content_Fastdic'] = df.apply(lambda row: scrape_and_process_fastdic(row['Words'], row.name + 1), axis=1)
 df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_process_faraazin_with_selenium(row['Words'], row.name + 1), axis=1)
+df['Processed_Content_Fastdic'] = df.apply(lambda row: scrape_and_process_fastdic(row['Words'], row.name + 1), axis=1)
+df['Processed_Content_Google_Translate'] = df.apply(lambda row: scrape_and_process_google_translate(row['Words'], row.name + 1), axis=1)
+
 
 # Save the updated DataFrame to a new Excel file
 output_file_path = 'output_processed_words_with_selenium.xlsx'
