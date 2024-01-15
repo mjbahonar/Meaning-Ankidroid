@@ -103,13 +103,76 @@ def scrape_and_process_google_translate(word, word_number):
         return translated_text
     except Exception as e:
         return f'Error in Google Translate: {e}'
+    
+
+def scrape_and_process_google_define_with_selenium(word, word_number):
+    url = f'https://www.google.com/search?client=firefox-b-d&q=define+{word}'
+
+    # Get the current script's directory
+    script_directory = os.path.dirname(os.path.realpath(__file__))
+
+    # Specify the path to ChromeDriver relative to the script's directory
+    chromedriver_path = os.path.join(script_directory, 'chromedriver-win64', 'chromedriver.exe')
+
+    # Initialize the driver outside the try block
+    driver = None
+
+    try:
+        # Set up a headless browser using Selenium with the specified path
+        options = Options()
+        options.headless = True
+        options.add_argument('--headless')  # Add this line
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-extensions')
+        driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
+        driver.get(url)
+
+        # Allow time for JavaScript to execute (you may need to adjust the sleep duration)
+        time.sleep(2)
+
+        # Find the element by class name
+        lr_container_element = driver.find_element(By.CLASS_NAME, "lr_container.yc7KLc.mBNN3d")
+
+        if lr_container_element:
+            # Use BeautifulSoup to process the content
+            soup = BeautifulSoup(lr_container_element.get_attribute("outerHTML"), 'html.parser')
+
+            # Remove script and style elements
+            for script_or_style in soup(['script', 'style']):
+                script_or_style.extract()
+
+            # Keep only specific tags (p, ol, li)
+            allowed_tags = ['p', 'ol', 'li']
+            for tag in soup.find_all(True):
+                if tag.name not in allowed_tags:
+                    tag.unwrap()
+
+            # Replace <li> tags with <p> tags
+            #for li_tag in soup.find_all('li'):
+            #    ol_tag = soup.new_tag('ol')
+            #    ol_tag.string = li_tag.get_text()
+            #    li_tag.replace_with(ol_tag)
+
+            # Get the cleaned HTML content
+            cleaned_html = soup.prettify()
+
+            print(f"Word {word_number}: '{word}' processed content from Google (Selenium)")
+            return cleaned_html
+        else:
+            return f'Content for word "{word}" not found with the specific class on Google.'
+    except Exception as e:
+        return f'Error: words not found'
+    finally:
+        # Close the browser window if it was opened
+        if driver:
+            driver.quit()
 
 
 # Process each word and store results in the second and third columns
-df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_process_faraazin_with_selenium(row['Words'], row.name + 1), axis=1)
-df['Processed_Content_Fastdic'] = df.apply(lambda row: scrape_and_process_fastdic(row['Words'], row.name + 1), axis=1)
-df['Processed_Content_Google_Translate'] = df.apply(lambda row: scrape_and_process_google_translate(row['Words'], row.name + 1), axis=1)
-
+#df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_process_faraazin_with_selenium(row['Words'], row.name + 1), axis=1)
+#df['Processed_Content_Fastdic'] = df.apply(lambda row: scrape_and_process_fastdic(row['Words'], row.name + 1), axis=1)
+#df['Processed_Content_Google_Translate'] = df.apply(lambda row: scrape_and_process_google_translate(row['Words'], row.name + 1), axis=1)
+df['Processed_Content_Google_Define_Selenium_processed'] = df.apply(lambda row: scrape_and_process_google_define_with_selenium(row['Words'], row.name + 1), axis=1)
 
 # Save the updated DataFrame to a new Excel file
 output_file_path = 'output_processed_words_with_selenium.xlsx'
