@@ -2,7 +2,6 @@ import pandas as pd
 import os
 import datetime
 from scraper_functions import scrape_and_process_fastdic, scrape_and_process_faraazin_with_selenium, scrape_and_process_google_translate, download_images
-import requests
 
 # Read Excel file without headers
 script_dir = os.path.dirname(os.path.abspath(__file__))
