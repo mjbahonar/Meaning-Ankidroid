@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import datetime
-from scraper_functions import scrape_and_process_fastdic, scrape_and_process_faraazin_with_selenium, scrape_and_process_google_translate
+from scraper_functions import scrape_and_process_fastdic, scrape_and_process_faraazin_with_selenium, scrape_and_process_google_translate, download_images
 import requests
 
 # Read Excel file without headers
@@ -15,6 +15,9 @@ df = pd.read_excel(excel_file_path, header=None, names=['Words'])
 df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_process_faraazin_with_selenium(row['Words'], row.name + 1), axis=1)
 df['Processed_Content_Fastdic'] = df.apply(lambda row: scrape_and_process_fastdic(row['Words'], row.name + 1), axis=1)
 df['Processed_Content_Google_Translate'] = df.apply(lambda row: scrape_and_process_google_translate(row['Words'], row.name + 1), axis=1)
+df['Downloaded_Images_HTML'] = df['Words'].apply(lambda word: download_images(word, n=5))
+
+
 # df['Processed_Content_Google_Define_Selenium_processed'] = df.apply(lambda row: scrape_and_process_google_define_with_selenium(row['Words'], row.name + 1), axis=1)
 
 # Save the updated DataFrame to a new Excel file

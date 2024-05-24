@@ -8,6 +8,78 @@ from requests.exceptions import ChunkedEncodingError
 import time
 import os
 from googletrans import Translator
+from PIL import Image
+from io import BytesIO
+
+def download_images(keywords, n=5):
+    # Get the current working directory
+    directory = os.getcwd()
+    
+    # Directory to save images
+    images_directory = r"C:\Users\mjbah\AppData\Roaming\Anki2\User 1\collection.media"
+    
+    # Create the Images directory if it doesn't exist
+    local_images_directory = os.path.join(directory, 'Images')
+    if not os.path.exists(local_images_directory):
+        os.makedirs(local_images_directory)
+    
+    # Google Image URL
+    url = "https://www.google.com/search?hl=en&tbm=isch&q=" + "+".join(keywords.split())+"+clipart"
+    
+    # Header to mimic a browser visit
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+    
+    # Send request to Google
+    response = requests.get(url, headers=headers)
+    
+    # Parse the HTML content
+    soup = BeautifulSoup(response.text, 'html.parser')
+    image_elements = soup.find_all('img', limit=n+1)  # +1 to skip the first irrelevant image
+    
+    img_paths = []
+    HTML_paths = []
+    
+    # Download and save images
+    for i, img in enumerate(image_elements[1:], start=1):  # Skip the first irrelevant result
+        try:
+            # Get image URL
+            img_url = img['src']
+            img_response = requests.get(img_url)
+            
+            # Open and save the image locally
+            img = Image.open(BytesIO(img_response.content))
+            
+            # Save image to the local directory
+            local_img_path = os.path.join(local_images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
+            img.save(local_img_path)
+            img_paths.append(local_img_path)
+            HTML_paths.append(local_img_path)
+            #print(f"Downloaded {local_img_path}")
+            print(f"Image for {keywords}, created in local folder")
+            
+            # Save image to the specified directory
+            specified_img_path = os.path.join(images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
+            img.save(specified_img_path)
+            img_paths.append(specified_img_path)
+            #print(f"Saved to specified directory: {specified_img_path}")
+            print(f"Image for {keywords}, created in collection.media folder")
+            
+        except Exception as e:
+            print(f"Could not download image {i} due to {e}")
+    
+    # Generate HTML
+    html = "<html>\n<head>\n<style>\n"
+    html += "body {text-align: center;}\n"
+    html += "img {margin: 10px;}\n"
+    html += "</style>\n</head>\n<body>\n"
+    
+    for img_path in HTML_paths:
+        img_filename = os.path.basename(img_path)
+        html += f'<img src="{img_filename}" alt="{keywords} image">\n<br>\n'
+    
+    html += "</body>\n</html>"
+    
+    return html
 
 def scrape_and_process_fastdic(word, word_number):
     url = f'https://fastdic.com/word/{word}'
