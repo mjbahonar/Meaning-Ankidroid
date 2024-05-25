@@ -10,13 +10,16 @@ import os
 from googletrans import Translator
 from PIL import Image
 from io import BytesIO
+from dotenv import load_dotenv
+
 
 def download_images(keywords, n=5):
     # Get the current working directory
     directory = os.getcwd()
     
     # Directory to save images
-    images_directory = r"C:\Users\mjbah\AppData\Roaming\Anki2\User 1\collection.media"
+    load_dotenv()
+    images_directory = os.getenv('ADDRESS')
     
     # Create the Images directory if it doesn't exist
     local_images_directory = os.path.join(directory, 'Images')
