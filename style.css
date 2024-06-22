@@ -1,0 +1,55 @@
+
+/* Reset default list styles */
+.eQJLDd {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* Style for each definition block */
+.eQJLDd > div[jsname="gskXhf"] {
+  margin-bottom: 20px; /* Space between each definition */
+  background-color: #f0f0f0; /* Light gray background */
+  padding: 15px;
+  border-left: 5px solid #3498db; /* Blue border left */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Style for the number marker */
+.eQJLDd > div[jsname="gskXhf"]::before {
+  content: attr(data-marker); /* Display the number */
+  font-weight: bold;
+  margin-right: 10px;
+  padding: 8px 12px;
+  background-color: #3498db; /* Blue background */
+  color: white;
+  border-radius: 5px;
+}
+
+/* Style for the main definition text */
+.eQJLDd > div[jsname="gskXhf"] > :not(.xpdxpnd) {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+/* Style for the expanded details */
+.xpdxpnd {
+  background-color: #fff; /* White background */
+  padding: 12px;
+  margin-top: 10px;
+  border-left: 3px solid #3498db; /* Blue border left */
+  font-size: 90%;
+  line-height: 1.4;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+/* Hide expanded details by default */
+.xpdxpnd[data-mh] {
+  max-height: 10;
+}
+
+/* Show expanded details when expanded */
+.xpdxpnd.expanded {
+  max-height: 500px; /* Adjust this to a reasonable maximum height */
+}

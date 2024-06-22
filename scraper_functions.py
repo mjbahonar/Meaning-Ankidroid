@@ -11,6 +11,9 @@ from googletrans import Translator
 from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
+import pyperclip
+
+
 
 
 def download_images(keywords, n=5):
@@ -177,7 +180,7 @@ def scrape_and_process_google_define_with_selenium(word, word_number):
         lr_container_element = driver.find_element(By.CLASS_NAME, "lr_container.yc7KLc.mBNN3d")
 
         if lr_container_element:
-            soup = BeautifulSoup(lr_container_element.get_attribute("outerHTML"), 'html.parser')
+            soup = BeautifulSoup(lr_container_element.get_attribute("outerHTML"), 'html.parser', from_encoding='utf-8')
             for script_or_style in soup(['script', 'style']):
                 script_or_style.extract()
 
@@ -186,13 +189,56 @@ def scrape_and_process_google_define_with_selenium(word, word_number):
                 if tag.name not in allowed_tags:
                     tag.unwrap()
 
-            cleaned_html = soup.prettify()
+            # Change all <li> tags to <div> tags
+            for li_tag in soup.find_all('li'):
+                li_tag.name = 'div'
+
+
+            # Find and style occurrences of "Similar" and "Opposite"
+            #for tag in soup.find_all(text=True):
+            #    if 'Similar' in tag:
+            #        tag.replace_with(tag.replace('Similar', '<span style="color: green; font-weight: bold;">Similar</span>'))
+            #    if 'Opposite' in tag:
+            #        tag.replace_with(tag.replace('Opposite', '<span style="color: blue; font-weight: bold;">Opposite</span>'))
+
+            # Get the prettified HTML content as a string
+            #cleaned_html_with_style = soup.prettify(formatter=None)  # Disable automatic entity conversion
+            
+            # Read style.css file content
+            style_css_path = os.path.join(script_directory, 'style.css')
+            if os.path.exists(style_css_path):
+                with open(style_css_path, 'r' , encoding='utf-8') as css_file:
+                    css_content = css_file.read()
+               
+                # Create a <style> tag and insert the CSS content
+                style_tag = soup.new_tag('style')
+                style_tag.string = css_content
+                
+                # Insert the <style> tag at the beginning of the body content
+                soup.insert(0, style_tag)
+
+            
+            # Get the updated prettified HTML content
+            cleaned_html_with_style = soup.prettify(formatter=None)
+
+
+            html_content = str(soup)
+            cleaned_html_with_style = html_content.replace('"', "'")
+
+
             print(f"Word {word_number}: '{word}' processed content from Google (Selenium)")
-            return cleaned_html
+            # Copy the string to the clipboard
+            string_to_copy=cleaned_html_with_style
+            pyperclip.copy(string_to_copy)
+
+            # Optionally, you can verify if the copying was successful
+            copied_text = pyperclip.paste()
+            print(f"Copied text: {copied_text}")
+            return cleaned_html_with_style
         else:
             return f'Content for word "{word}" not found with the specific class on Google.'
     except Exception as e:
-        return f'Error: words not found'
+        return f'Error: {str(e)}'
     finally:
         if driver:
             driver.quit()
