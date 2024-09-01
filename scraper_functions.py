@@ -12,80 +12,94 @@ from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
 import pyperclip
+import re
 
 
 
 
-def download_images(keywords, n=5):
-    # Get the current working directory
-    directory = os.getcwd()
-    
-    # Directory to save images
-    load_dotenv()
-    images_directory = os.getenv('ADDRESS')
-    
-    # Create the Images directory if it doesn't exist
-    local_images_directory = os.path.join(directory, 'Images')
-    if not os.path.exists(local_images_directory):
-        os.makedirs(local_images_directory)
-    
-    # Google Image URL
-    url = "https://www.google.com/search?hl=en&tbm=isch&q=" + "+".join(keywords.split())+"+clipart"
-    
-    # Header to mimic a browser visit
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-    
-    # Send request to Google
-    response = requests.get(url, headers=headers)
-    
-    # Parse the HTML content
-    soup = BeautifulSoup(response.text, 'html.parser')
-    image_elements = soup.find_all('img', limit=n+1)  # +1 to skip the first irrelevant image
-    
-    img_paths = []
-    HTML_paths = []
-    
-    # Download and save images
-    for i, img in enumerate(image_elements[1:], start=1):  # Skip the first irrelevant result
+
+def download_images(keywords, word_number, n=5):
+    try:
+        keywords = re.sub(r'[\\/*?:"<>|]', '_', str(keywords))
+
+        # Get the current working directory
+        directory = os.getcwd()
+        
+        # Directory to save images
+        load_dotenv()
+        images_directory = os.getenv('ADDRESS')
+        
+        # Create the Images directory if it doesn't exist
+        local_images_directory = os.path.join(directory, 'Images')
+        if not os.path.exists(local_images_directory):
+            os.makedirs(local_images_directory)
+        
+        # Google Image URL
+        url = "https://www.google.com/search?hl=en&tbm=isch&q=" + "+".join(keywords.split())+"+clipart"
+        
+        # Header to mimic a browser visit
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+        
+        # Send request to Google
         try:
-            # Get image URL
-            img_url = img['src']
-            img_response = requests.get(img_url)
-            
-            # Open and save the image locally
-            img = Image.open(BytesIO(img_response.content))
-            
-            # Save image to the local directory
-            local_img_path = os.path.join(local_images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
-            img.save(local_img_path)
-            img_paths.append(local_img_path)
-            HTML_paths.append(local_img_path)
-            #print(f"Downloaded {local_img_path}")
-            print(f"Image for {keywords}, created in local folder")
-            
-            # Save image to the specified directory
-            specified_img_path = os.path.join(images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
-            img.save(specified_img_path)
-            img_paths.append(specified_img_path)
-            #print(f"Saved to specified directory: {specified_img_path}")
-            print(f"Image for {keywords}, created in collection.media folder")
-            
-        except Exception as e:
-            print(f"Could not download image {i} due to {e}")
-    
-    # Generate HTML
-    html = "<html>\n<head>\n<style>\n"
-    html += "body {text-align: center;}\n"
-    html += "img {margin: 10px;}\n"
-    html += "</style>\n</head>\n<body>\n"
-    
-    for img_path in HTML_paths:
-        img_filename = os.path.basename(img_path)
-        html += f'<img src="{img_filename}" alt="{keywords} image">\n<br>\n'
-    
-    html += "</body>\n</html>"
-    
-    return html
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()  # This checks for HTTP errors
+            # Process response data here
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            return "Error from recieving from net. I hate you GOOGLE!!!"
+        
+        # Parse the HTML content
+        soup = BeautifulSoup(response.text, 'html.parser')
+        image_elements = soup.find_all('img', limit=n+1)  # +1 to skip the first irrelevant image
+        
+        img_paths = []
+        HTML_paths = []
+        
+        # Download and save images
+        print(f"Word {word_number} : is processing by google image function")
+        for i, img in enumerate(image_elements[1:], start=1):  # Skip the first irrelevant result
+            try:
+                # Get image URL
+                img_url = img['src']
+                img_response = requests.get(img_url)
+                
+                # Open and save the image locally
+                img = Image.open(BytesIO(img_response.content))
+                
+                # Save image to the local directory
+                local_img_path = os.path.join(local_images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
+                img.save(local_img_path)
+                img_paths.append(local_img_path)
+                HTML_paths.append(local_img_path)
+                #print(f"Downloaded {local_img_path}")
+                print(f"Image for {keywords}, created in local folder")
+                
+                # Save image to the specified directory
+                specified_img_path = os.path.join(images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
+                img.save(specified_img_path)
+                img_paths.append(specified_img_path)
+                #print(f"Saved to specified directory: {specified_img_path}")
+                print(f"Image for {keywords}, created in collection.media folder")
+                
+            except Exception as e:
+                print(f"Could not download image {i} due to {e}")
+        
+        # Generate HTML
+        html = "<html>\n<head>\n<style>\n"
+        html += "body {text-align: center;}\n"
+        html += "img {margin: 10px;}\n"
+        html += "</style>\n</head>\n<body>\n"
+        
+        for img_path in HTML_paths:
+            img_filename = os.path.basename(img_path)
+            html += f'<img src="{img_filename}" alt="{keywords} image">\n<br>\n'
+        
+        html += "</body>\n</html>"
+        
+        return html
+    except ChunkedEncodingError as e:
+        return f'Error: {e}'
 
 def scrape_and_process_fastdic(word, word_number):
     url = f'https://fastdic.com/word/{word}'
@@ -140,6 +154,7 @@ def scrape_and_process_faraazin_with_selenium(word, word_number):
             for a_tag in target_div.find_all('a', href=True):
                 a_tag.replace_with(a_tag.text)
             content = target_div.prettify()
+            content = content.replace('"', "'")
             print(f"Word {word_number}: '{word}' done by faraazin (with Selenium)")
             return content
         else:
@@ -163,7 +178,7 @@ def scrape_and_process_google_translate(word, word_number):
     
 
 def scrape_and_process_google_define_with_selenium(word, word_number):
-    url = f'https://www.google.com/search?client=firefox-b-d&q=define+{word}'
+    url = f'https://www.google.com/search?client=firefox-b-d&q=dictionary+{word}'
     script_directory = os.path.dirname(os.path.realpath(__file__))
     chromedriver_path = os.path.join(script_directory, 'chromedriver-win64', 'chromedriver.exe')
     driver = None
@@ -227,6 +242,55 @@ def scrape_and_process_google_define_with_selenium(word, word_number):
 
 
             print(f"Word {word_number}: '{word}' processed content from Google (Selenium)")
+            # Copy the string to the clipboard
+            string_to_copy=cleaned_html_with_style
+            pyperclip.copy(string_to_copy)
+
+            # Optionally, you can verify if the copying was successful
+            copied_text = pyperclip.paste()
+            print(f"Copied text: {copied_text}")
+            return cleaned_html_with_style
+        else:
+            return f'Content for word "{word}" not found with the specific class on Google.'
+    except Exception as e:
+        return f'Error: {str(e)}'
+    finally:
+        if driver:
+            driver.quit()
+
+
+def scrape_and_process_cambridge_define_with_selenium(word, word_number):
+    url = f'https://www.google.com/search?client=firefox-b-d&q=cambridge+dictionary+{word}'
+    script_directory = os.path.dirname(os.path.realpath(__file__))
+    chromedriver_path = os.path.join(script_directory, 'chromedriver-win64', 'chromedriver.exe')
+    driver = None
+
+    try:
+        options = Options()
+        options.headless = True
+        options.add_argument('--headless')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-extensions')
+        driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
+        driver.get(url)
+        time.sleep(2)
+        lr_container_element = driver.find_element(By.CLASS_NAME, "hgKElc")
+
+        if lr_container_element:
+            soup = BeautifulSoup(lr_container_element.get_attribute("outerHTML"), 'html.parser', from_encoding='utf-8')
+            for script_or_style in soup(['script', 'style']):
+                script_or_style.extract()
+
+        
+            # Get the updated prettified HTML content
+            cleaned_html_with_style = soup.prettify(formatter=None)
+
+
+            html_content = str(soup)
+            cleaned_html_with_style = html_content.replace('"', "'")
+
+
+            print(f"Word {word_number}: '{word}' processed content from CAMBRIDGE (Selenium)")
             # Copy the string to the clipboard
             string_to_copy=cleaned_html_with_style
             pyperclip.copy(string_to_copy)
