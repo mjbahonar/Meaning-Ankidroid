@@ -4,3 +4,7 @@
 
 # Ignore CSV files
 *.csv
+
+*.env
+.env
+*.png
