@@ -1,6 +1,6 @@
 
 
-# 🚀 Anki Word-Wizard: Automated Card Data Generator 🚀
+# 🚀 Anki Word-Wizard: Automated Card Data Generator
 
 [![GitHub Stars](https://img.shields.io/github/stars/mjbahonar/Meaning-Ankidroid?style=social)](https://github.com/mjbahonar/Meaning-Ankidroid/stargazers) [![GitHub Forks](https://img.shields.io/github/forks/mjbahonar/Meaning-Ankidroid?style=social)](https://github.com/mjbahonar/Meaning-Ankidroid/fork) [![License](https://img.shields.io/github/license/mjbahonar/Meaning-Ankidroid)](./LICENSE) [![Repo Size](https://img.shields.io/github/repo-size/mjbahonar/Meaning-Ankidroid)](https://github.com/mjbahonar/Meaning-Ankidroid) [![Last Commit](https://img.shields.io/github/last-commit/mjbahonar/Meaning-Ankidroid)](https://github.com/mjbahonar/Meaning-Ankidroid/commits) [![Contributors](https://img.shields.io/github/contributors/mjbahonar/Meaning-Ankidroid)](https://github.com/mjbahonar/Meaning-Ankidroid/graphs/contributors)
 
