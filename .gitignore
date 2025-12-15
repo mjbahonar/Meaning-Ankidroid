@@ -8,3 +8,10 @@
 *.env
 .env
 *.png
+
+#Folders
+/chromedriver-win64
+/Audio
+/Images
+/Output
+/venv

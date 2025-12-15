@@ -27,6 +27,7 @@ The project is organized into two main files:
     *   **Google Translate** (For quick translations into any language)
     *   **Google Dictionary** (For in-depth English definitions, synonyms, and antonyms)
     *   **Cambridge Dictionary** (For detailed definitions and example sentences)
+    *   **Dictionary.com** (Audio and meanings)
 *   **🖼️ Automatic Image Downloader**: Fetches and downloads relevant clipart images for each word to create visually engaging flashcards.
 *   **⚙️ Powerful Batch Processing**: Processes an entire vocabulary list from an Excel file in one go.
 *   **✔️ Anki-Ready Output**: Generates clean, styled HTML content in the output files, perfect for direct import and mapping to your Anki card fields.
@@ -72,6 +73,7 @@ Before you begin, ensure you have the following set up:
         # Example for Windows. "YourProfile" is the name of your Anki profile.
         ADDRESS="C:/Users/YourUser/AppData/Roaming/Anki2/YourProfile/collection.media"
         ```
+        To find out the address of the where the media are collected, go to your Anki app on windows, `Tools`>`Check Media...`> at the bottom of the windows click on `view files`. Now the folder is open and you can copy the address from file explorer.
 
 ## ▶️ Usage
 

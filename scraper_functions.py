@@ -13,10 +13,43 @@ from io import BytesIO
 from dotenv import load_dotenv
 import pyperclip
 import re
+from deep_translator import GoogleTranslator
 
 
 
+# =========================
+# SAFE NETWORK LAYER
+# =========================
 
+import random
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+session = requests.Session()
+
+retries = Retry(
+    total=5,
+    backoff_factor=2,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["GET"]
+)
+
+adapter = HTTPAdapter(max_retries=retries)
+session.mount("http://", adapter)
+session.mount("https://", adapter)
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+}
+
+def safe_get(url, timeout=15):
+    time.sleep(3 + random.uniform(0, 3))
+    return session.get(url, headers=HEADERS, timeout=timeout)
+
+
+# =========================
+# Image Downloader
+# =========================
 
 def download_images(keywords, word_number, n=5):
     try:
@@ -100,36 +133,83 @@ def download_images(keywords, word_number, n=5):
         return html
     except ChunkedEncodingError as e:
         return f'Error: {e}'
+    
+
+# =========================
+# Fastdic Scraper
+# =========================
 
 def scrape_and_process_fastdic(word, word_number):
-    url = f'https://fastdic.com/word/{word}'
-    
+    print(f"[FASTDICT] ({word_number}) {word}")
+
+    url = f"https://fastdic.com/word/{word}"
+    headers = {"User-Agent": "Mozilla/5.0"}
+
     try:
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url, headers=headers)
-        #response = requests.get(url)
-        #response = requests.get(url, allow_redirects=False, timeout=5)
+        response = requests.get(url, headers=headers, timeout=15)
 
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            target_section = soup.find('section', class_='results__container')
+        if response.status_code != 200:
+            return f"Fastdic HTTP {response.status_code}"
 
-            if target_section:
-                classes_to_remove = ['suggestion-form-btn', 'yn']
-                for class_to_remove in classes_to_remove:
-                    elements_to_remove = target_section.find_all(class_=class_to_remove)
-                    for element in elements_to_remove:
-                        element.extract()
+        soup = BeautifulSoup(response.text, "html.parser")
 
-                content = target_section.prettify()
-                print(f"Word {word_number}: '{word}' done by fastdic")
-                return content
-            else:
-                return f'Word "{word}" not found.'
-        else:
-            return f'Error: {response.status_code}'
-    except ChunkedEncodingError as e:
-        return f'Error: {e}'
+        # Main result container
+        target_section = soup.find("section", class_="results__container")
+        if not target_section:
+            return f'Fastdic: result section not found for "{word}"'
+
+        # --------------------------------
+        # REMOVE UNWANTED IDS
+        # --------------------------------
+        for unwanted_id in ("faqs", "cite"):
+            tag = target_section.find(id=unwanted_id)
+            if tag:
+                tag.decompose()
+
+        # --------------------------------
+        # REMOVE UNWANTED CLASSES
+        # --------------------------------
+        selectors_to_remove = [
+            ".fd-sidebar.js-sidebar",
+            ".relevant",
+            ".tab-wrapper.tab-big",
+        ]
+
+        for selector in selectors_to_remove:
+            for el in target_section.select(selector):
+                el.decompose()
+
+        # Remove junk UI classes
+        for cls in ("suggestion-form-btn", "yn", "js-sidebar"):
+            for el in target_section.find_all(class_=cls):
+                el.decompose()
+
+        # Remove scripts & styles
+        for tag in target_section.find_all(["script", "style"]):
+            tag.decompose()
+
+        # --------------------------------
+        # FINAL HTML (ANKI SAFE)
+        # --------------------------------
+        content = target_section.prettify()
+
+        html = f"""
+        <div>
+            {content}
+        </div>
+        """
+
+        print(f"[FASTDICT] DONE: {word}")
+        return html.replace('"', "'")
+
+    except Exception as e:
+        print(f"[FASTDICT] ERROR: {e}")
+        return f"Fastdic error: {e}"
+
+    
+# =========================
+# Faraazin Scraper with Selenium
+# =========================    
 
 def scrape_and_process_faraazin_with_selenium(word, word_number):
     url = f'https://www.faraazin.ir/?q={word}'
@@ -165,17 +245,24 @@ def scrape_and_process_faraazin_with_selenium(word, word_number):
         if driver:
             driver.quit()
 
-def scrape_and_process_google_translate(word, word_number):
-    translator = Translator()
+# =========================
+# Google Translate Scraper
+# =========================
 
+def scrape_and_process_google_translate(word, word_number):
+    time.sleep(4 + random.uniform(0, 4))
     try:
-        translation = translator.translate(word, src='en', dest='fa')
-        translated_text = translation.text
-        print(f"Word {word_number}: '{word}' translated by Google Translate: '{translated_text}'")
+        translated_text = GoogleTranslator(source='en', target='fa').translate(word)
+        print(f"Word {word_number}: '{word}' translated by Google Translate")
         return translated_text
     except Exception as e:
-        return f'Error in Google Translate: {e}'
+        print(f"Google Translate FAILED for '{word}': {e}")
+        return ""
+
     
+# =========================
+# Google Define with Selenium Scraper
+# =========================
 
 def scrape_and_process_google_define_with_selenium(word, word_number):
     url = f'https://www.google.com/search?client=firefox-b-d&q=dictionary+{word}'
@@ -258,6 +345,9 @@ def scrape_and_process_google_define_with_selenium(word, word_number):
         if driver:
             driver.quit()
 
+# =========================
+# Cambridge Define with Selenium Scraper
+# =========================
 
 def scrape_and_process_cambridge_define_with_selenium(word, word_number):
     url = f'https://www.google.com/search?client=firefox-b-d&q=cambridge+dictionary+{word}'
@@ -306,3 +396,177 @@ def scrape_and_process_cambridge_define_with_selenium(word, word_number):
     finally:
         if driver:
             driver.quit()
+
+# =========================
+# Dictionary.com Scraper
+# =========================
+
+def scrape_and_process_dictionary_com(word, word_number):
+    print(f"[DICT] ({word_number}) {word}")
+
+    try:
+        url = f"https://www.dictionary.com/browse/{word}"
+        r = safe_get(url)
+
+        print(f"[DICT] HTTP {r.status_code}")
+        if r.status_code != 200:
+            return f"Dictionary HTTP {r.status_code}"
+
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        title = soup.find("h1", class_="hdr-headword-dcom-1")
+        phon = soup.find("span", class_="txt-phonetic")
+        ipa = soup.find("span", class_="txt-ipa")
+
+        audio_html = ""
+        audio_box = soup.find("div", class_="box-audio-pronunciation")
+
+        if audio_box:
+            button = audio_box.find("button", class_="common-btn-headword-audio")
+            if button:
+                origin = button.get("data-audioorigin")
+                src = button.get("data-audiosrc")
+                if origin and src:
+                    audio_url = f"{origin}/{src}"
+                    audio_html = download_dictionary_audio(word, audio_url)
+                else:
+                    print("[DICT] Audio attributes missing")
+            else:
+                print("[DICT] Audio button not found")
+        else:
+            print("[DICT] Audio box not found")
+
+        def sec(id_):
+            s = soup.find(id=id_)
+            print(f"[DICT] {id_}:", "FOUND" if s else "NOT FOUND")
+            return s.prettify() if s else ""
+
+        html = f"""
+        <div class="dictionary-com">
+            <h1>{title.text if title else word}</h1>
+            <div>{phon.text if phon else ''} {ipa.text if ipa else ''}</div>
+            {audio_html}
+            {sec('id-sec-entry-group-dcom')}
+            {sec('id-sec-entry-group-british')}
+            {sec('id-sec-example-sentences')}
+            {sec('id-sec-related-words')}
+            {sec('id-sec-other-word-forms')}
+            {sec('id-sec-entry-group-idiom')}
+        </div>
+        """
+
+        print(f"[DICT] DONE: {word}")
+        return html.replace('"', "'")
+
+    except Exception as e:
+        print(f"[DICT] EXCEPTION: {e}")
+        return f"Dictionary error: {e}"
+
+# =========================
+# dictionary.com Audio Downloader
+# =========================
+
+def download_dictionary_audio(word, audio_url):
+    print(f"[AUDIO] Downloading audio for '{word}'")
+
+    load_dotenv()
+    media_dir = os.getenv("ADDRESS")
+
+    local_audio_dir = os.path.join(os.getcwd(), "Audio")
+    os.makedirs(local_audio_dir, exist_ok=True)
+
+    if not media_dir:
+        print("[AUDIO] ERROR: ADDRESS not set")
+        return ""
+
+    filename = f"{word}_pronunciation.mp3"
+    local_path = os.path.join(local_audio_dir, filename)
+    media_path = os.path.join(media_dir, filename)
+
+    try:
+        r = safe_get(audio_url)
+        print(f"[AUDIO] HTTP {r.status_code}")
+
+        if r.status_code != 200:
+            print("[AUDIO] Download failed")
+            return ""
+
+        with open(local_path, "wb") as f:
+            f.write(r.content)
+
+        with open(media_path, "wb") as f:
+            f.write(r.content)
+
+        print("[AUDIO] Saved locally and to ADDRESS")
+
+        return f"""
+        <audio controls>
+            <source src="{filename}" type="audio/mpeg">
+        </audio>
+        """
+
+    except Exception as e:
+        print(f"[AUDIO] EXCEPTION: {e}")
+        return ""
+
+# =========================
+# thesaurus.com Scraper
+# =========================
+
+def scrape_and_process_thesaurus_com(word, word_number):
+    print(f"[THES] ({word_number}) {word}")
+
+    url = f"https://www.thesaurus.com/browse/{word}"
+    r = safe_get(url)
+
+    if r.status_code != 200:
+        return f"Thesaurus HTTP {r.status_code}"
+
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    panels = soup.select("section.synonym-antonym-panel")
+
+    if not panels:
+        return "Thesaurus: no synonym/antonym panels found"
+
+    data = {"synonyms": {}, "antonyms": {}}
+
+    for panel in panels:
+        label_div = panel.find("div", class_="synonym-antonym-panel-label")
+        if not label_div:
+            continue
+
+        label = label_div.get_text(strip=True).lower()
+        target = "synonyms" if "synonym" in label else "antonyms"
+
+        level_labels = panel.select("div.similarity-level-label")
+        word_lists = panel.select("div.similarity-level-word-list")
+
+        for lvl, words_div in zip(level_labels, word_lists):
+            level_name = lvl.get_text(strip=True)
+
+            words = [
+                a.get_text(strip=True)
+                for a in words_div.select("a.word-chip.synonym-antonym-word-chip")
+            ]
+
+            if words:
+                data[target][level_name] = words
+
+    # -------- HTML output --------
+    html = "<div class='thesaurus'>"
+
+    for kind in ("synonyms", "antonyms"):
+        if data[kind]:
+            html += f"<h3>{kind.capitalize()}</h3>"
+            for level, words in data[kind].items():
+                html += f"<b>{level}</b>: " + ", ".join(words) + "<br>"
+
+    html += "</div>"
+
+    print(
+        f"[THES] Synonyms: {sum(len(v) for v in data['synonyms'].values())}, "
+        f"Antonyms: {sum(len(v) for v in data['antonyms'].values())}"
+    )
+
+    return html.replace('"', "'")
