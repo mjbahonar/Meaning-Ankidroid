@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from requests.exceptions import ChunkedEncodingError
 import time
 import os
@@ -15,6 +16,20 @@ import pyperclip
 import re
 from deep_translator import GoogleTranslator
 
+
+### Press CNTL+Shift+O to see the functions list in VSCode
+
+# =========================
+# chromedriver setup
+# =========================
+
+def get_driver(chromedriver_path):
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-extensions')
+    service = Service(chromedriver_path)
+    return webdriver.Chrome(service=service, options=options)
 
 
 # =========================
@@ -218,12 +233,7 @@ def scrape_and_process_faraazin_with_selenium(word, word_number):
     driver = None
     
     try:
-        options = Options()
-        options.headless = True
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--disable-extensions')
-        driver = webdriver.Chrome(executable_path=chromedriver_path)
+        driver = get_driver(chromedriver_path)
         driver.get(url)
         time.sleep(2)
         page_source = driver.page_source
@@ -271,12 +281,7 @@ def scrape_and_process_google_define_with_selenium(word, word_number):
     driver = None
 
     try:
-        options = Options()
-        options.headless = True
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--disable-extensions')
-        driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
+        driver = get_driver(chromedriver_path)
         driver.get(url)
         time.sleep(2)
         lr_container_element = driver.find_element(By.CLASS_NAME, "lr_container.yc7KLc.mBNN3d")
@@ -414,6 +419,12 @@ def scrape_and_process_dictionary_com(word, word_number):
 
         soup = BeautifulSoup(r.text, "html.parser")
 
+
+        ##### White Page Problem Solver ##### 
+        for tag in soup.find_all(["style", "script", "svg", "link", "iframe"]):
+            tag.decompose()
+
+
         title = soup.find("h1", class_="hdr-headword-dcom-1")
         phon = soup.find("span", class_="txt-phonetic")
         ipa = soup.find("span", class_="txt-ipa")
@@ -421,7 +432,11 @@ def scrape_and_process_dictionary_com(word, word_number):
         audio_html = ""
         audio_box = soup.find("div", class_="box-audio-pronunciation")
 
-        if audio_box:
+
+        ##### Manual Audio Downloader Toggle #####
+        download_audio = False  # Set to True to enable audio downloading or False to disable
+
+        if audio_box and download_audio:
             button = audio_box.find("button", class_="common-btn-headword-audio")
             if button:
                 origin = button.get("data-audioorigin")
@@ -434,7 +449,7 @@ def scrape_and_process_dictionary_com(word, word_number):
             else:
                 print("[DICT] Audio button not found")
         else:
-            print("[DICT] Audio box not found")
+            print("[DICT] Audio box not found or Disabled Manually")
 
         def sec(id_):
             s = soup.find(id=id_)
@@ -479,7 +494,7 @@ def download_dictionary_audio(word, audio_url):
         print("[AUDIO] ERROR: ADDRESS not set")
         return ""
 
-    filename = f"{word}_pronunciation.mp3"
+    filename = f"{word}_pronunciation_Dictionary.com.mp3"
     local_path = os.path.join(local_audio_dir, filename)
     media_path = os.path.join(media_dir, filename)
 
@@ -570,3 +585,91 @@ def scrape_and_process_thesaurus_com(word, word_number):
     )
 
     return html.replace('"', "'")
+
+
+# =========================
+# FastDic Audio Scraper
+# =========================
+
+
+def scrape_and_process_fastdic_audio(word, word_number):
+    """
+    Standalone Fastdic audio scraper.
+    Does NOT depend on Fastdic HTML scraper.
+    Returns HTML <audio> tags.
+    """
+
+    import os
+    import requests
+    from bs4 import BeautifulSoup
+    from dotenv import load_dotenv
+
+    print(f"[FASTDICT AUDIO] ({word_number}) {word}")
+
+    load_dotenv()
+    media_dir = os.getenv("ADDRESS")
+    local_audio_dir = os.path.join(os.getcwd(), "Audio")
+    os.makedirs(local_audio_dir, exist_ok=True)
+
+    if not media_dir:
+        print("[FASTDICT AUDIO] ADDRESS not set")
+        return ""
+
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://fastdic.com/"
+    }
+
+    page_url = f"https://fastdic.com/word/{word}"
+
+    try:
+        page = requests.get(page_url, headers=headers, timeout=15)
+        if page.status_code != 200:
+            return f"Fastdic audio page HTTP {page.status_code}"
+
+        soup = BeautifulSoup(page.text, "html.parser")
+
+        audio_html = ""
+
+        audio_spans = soup.select("span.audio.js-audio")
+
+        for span in audio_spans:
+            src = span.get("data-src")
+            audio_type = span.get("data-type")  # us / uk
+
+            if not src or audio_type not in ("us", "uk"):
+                continue
+
+            audio_url = f"https://cdn.fastdic.com/c-en-audios/{audio_type}/mp3/{src}.mp3"
+
+            filename = f"fastdic_{word}_{audio_type}.mp3"
+            local_path = os.path.join(local_audio_dir, filename)
+            media_path = os.path.join(media_dir, filename)
+
+            if not (os.path.exists(local_path) and os.path.exists(media_path)):
+                r = requests.get(audio_url, headers=headers, timeout=15)
+
+                if r.status_code not in (200, 206):
+                    print(f"[FASTDICT AUDIO] Failed {audio_type.upper()}")
+                    continue
+
+                with open(local_path, "wb") as f:
+                    f.write(r.content)
+
+                with open(media_path, "wb") as f:
+                    f.write(r.content)
+
+                print(f"[FASTDICT AUDIO] Saved {audio_type.upper()}")
+
+            audio_html += f"""
+            Audio {audio_type.upper()}:
+            <audio controls>
+                <source src="{filename}" type="audio/mpeg">
+            </audio>
+            """
+
+        return audio_html.strip()
+
+    except Exception as e:
+        print(f"[FASTDICT AUDIO] ERROR: {e}")
+        return ""

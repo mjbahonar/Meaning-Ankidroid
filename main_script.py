@@ -11,7 +11,8 @@ from scraper_functions import (
     scrape_and_process_google_define_with_selenium,
     scrape_and_process_cambridge_define_with_selenium,
     scrape_and_process_dictionary_com,
-    scrape_and_process_thesaurus_com
+    scrape_and_process_thesaurus_com,
+    scrape_and_process_fastdic_audio
 )
 
 from deep_translator import GoogleTranslator
@@ -38,14 +39,15 @@ df = pd.read_excel(excel_file_path, header=None, names=["Words"])
 # -------------------------------------------------
 # PROCESS WORDS
 # -------------------------------------------------
-df["Processed_Content_Fastdic"] = df.apply(lambda row: scrape_and_process_fastdic(row["Words"], row.name + 1),axis=1)
+#df["Processed_Content_Fastdic"] = df.apply(lambda row: scrape_and_process_fastdic(row["Words"], row.name + 1),axis=1)
 df["Processed_Content_Google_Translate"] = df.apply(lambda row: scrape_and_process_google_translate(row["Words"], row.name + 1),axis=1)
-df["Downloaded_Images_HTML"] = df.apply(lambda row: download_images(row["Words"], row.name + 1, n=4),axis=1)
+#df["Downloaded_Images_HTML"] = df.apply(lambda row: download_images(row["Words"], row.name + 1, n=4),axis=1)
 df["Dictionary_com"] = df.apply(lambda row: scrape_and_process_dictionary_com(row["Words"], row.name + 1),axis=1)
-df["Thesaurus_com"] = df.apply(lambda row: scrape_and_process_thesaurus_com(row["Words"], row.name + 1),axis=1)
-#df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_process_faraazin_with_selenium(row['Words'], row.name + 1), axis=1)
+#df["Thesaurus_com"] = df.apply(lambda row: scrape_and_process_thesaurus_com(row["Words"], row.name + 1),axis=1)
+df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_process_faraazin_with_selenium(row['Words'], row.name + 1), axis=1)
 #df['Processed_Content_Google_Define_Selenium_processed'] = df.apply(lambda row: scrape_and_process_google_define_with_selenium(row['Words'], row.name + 1), axis=1)
 #df['scrape_and_process_cambridge_define_with_selenium'] = df.apply(lambda row: scrape_and_process_cambridge_define_with_selenium(row['Words'], row.name + 1), axis=1)
+df["Fastdic_Audio"] = df.apply(lambda row: scrape_and_process_fastdic_audio(row["Words"], row.name + 1),axis=1)
 
 # -------------------------------------------------
 # SAVE OUTPUT FILES INTO Output/
