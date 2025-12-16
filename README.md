@@ -150,7 +150,39 @@ The generated `.csv` file is formatted for easy import into Anki.
         *   Column 5 (`Downloaded_Images_HTML`) -> `Images` field
     *   Ensure the "Allow HTML in fields" option is **checked**.
 
+## V3.0 Release Notes
 
+### ✨ Major Features and Improvements
+
+#### 🚀 **New Word-by-Word Processing Logic**
+
+The core processing logic has been fundamentally redesigned to operate on a word-by-word basis, significantly improving efficiency and reliability for long jobs.
+
+* **Function Change:** The main execution script is now initiated via `main_script(word_by_word)`.
+* **Output Structure:** The final output is now constructed **row-by-row** (one complete record at a time) instead of the previous column-by-column method.
+
+#### 💾 **Robust Auto-Save and Parallel Execution**
+
+To support the new processing logic and prevent data loss, auto-saving and parallel processing capabilities have been integrated.
+
+* **Autosave:** Data is now saved incrementally after processing a specified number of words.
+* **Parallelism:** The script can now leverage multi-threading to speed up non-Selenium tasks.
+
+**Configuration Changes in `main_script(word_by_word).py` (or equivalent file):**
+
+You must update the following settings to configure the new features:
+
+| Setting | Default Value | Description |
+| :--- | :--- | :--- |
+| `AUTOSAVE_EVERY` | `5` | 💾 Autosave the progress and output file every N words processed. |
+| `ENABLE_PARALLEL` | `True` | ⚡ Turn parallel processing ON (`True`) or OFF (`False`). |
+| `MAX_WORKERS` | `3` | Defines the maximum number of worker threads for parallel, non-Selenium tasks. |
+
+#### 🗣️ **Enhanced Audio Support**
+
+Audio fetching has been updated and expanded:
+
+* **New Source:** Added audio support from **FastDic** for two distinct accents: **US** and **UK**.
 
 ## 🤝 Contributing
 
