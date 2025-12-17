@@ -12,7 +12,8 @@ from scraper_functions import (
     scrape_and_process_cambridge_define_with_selenium,
     scrape_and_process_dictionary_com,
     scrape_and_process_thesaurus_com,
-    scrape_and_process_fastdic_audio
+    scrape_and_process_fastdic_audio,
+    scrape_and_process_b_amooz
 )
 
 from deep_translator import GoogleTranslator
@@ -78,6 +79,7 @@ df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_proc
 #df['Processed_Content_Google_Define_Selenium_processed'] = df.apply(lambda row: scrape_and_process_google_define_with_selenium(row['Words'], row.name + 1), axis=1)
 #df['scrape_and_process_cambridge_define_with_selenium'] = df.apply(lambda row: scrape_and_process_cambridge_define_with_selenium(row['Words'], row.name + 1), axis=1)
 df["Fastdic_Audio"] = df.apply(lambda row: scrape_and_process_fastdic_audio(row["Words"], row.name + 1),axis=1)
+df["b_amooz"] = df.apply(lambda row: scrape_and_process_b_amooz(row["Words"], row.name + 1),axis=1)
 
 # -------------------------------------------------
 # ANKI FRONT FIELD POST-PROCESSING (NEW STEP)

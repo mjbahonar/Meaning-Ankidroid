@@ -70,84 +70,67 @@ def download_images(keywords, word_number, n=5):
     try:
         keywords = re.sub(r'[\\/*?:"<>|]', '_', str(keywords))
 
-        # Get the current working directory
         directory = os.getcwd()
-        
-        # Directory to save images
         load_dotenv()
         images_directory = os.getenv('ADDRESS')
-        
-        # Create the Images directory if it doesn't exist
+
         local_images_directory = os.path.join(directory, 'Images')
         if not os.path.exists(local_images_directory):
             os.makedirs(local_images_directory)
-        
-        # Google Image URL
-        url = "https://www.google.com/search?hl=en&tbm=isch&q=" + "+".join(keywords.split())+"+clipart"
-        
-        # Header to mimic a browser visit
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-        
-        # Send request to Google
+
+        url = "https://www.google.com/search?hl=en&tbm=isch&q=" + "+".join(keywords.split()) + "+clipart"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+
         try:
             response = requests.get(url, headers=headers)
-            response.raise_for_status()  # This checks for HTTP errors
-            # Process response data here
+            response.raise_for_status()
         except requests.exceptions.RequestException as e:
             print(f"Request failed: {e}")
-            return "Error from recieving from net. I hate you GOOGLE!!!"
-        
-        # Parse the HTML content
+            return ""
+
         soup = BeautifulSoup(response.text, 'html.parser')
-        image_elements = soup.find_all('img', limit=n+1)  # +1 to skip the first irrelevant image
-        
-        img_paths = []
+        image_elements = soup.find_all('img', limit=n + 1)
+
         HTML_paths = []
-        
-        # Download and save images
+
         print(f"Word {word_number} : is processing by google image function")
-        for i, img in enumerate(image_elements[1:], start=1):  # Skip the first irrelevant result
+
+        for i, img in enumerate(image_elements[1:], start=1):
             try:
-                # Get image URL
                 img_url = img['src']
                 img_response = requests.get(img_url)
-                
-                # Open and save the image locally
-                img = Image.open(BytesIO(img_response.content))
-                
-                # Save image to the local directory
-                local_img_path = os.path.join(local_images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
-                img.save(local_img_path)
-                img_paths.append(local_img_path)
-                HTML_paths.append(local_img_path)
-                #print(f"Downloaded {local_img_path}")
-                print(f"Image for {keywords}, created in local folder")
-                
-                # Save image to the specified directory
-                specified_img_path = os.path.join(images_directory, f"{keywords.replace(' ', '_')}_{i}.png")
-                img.save(specified_img_path)
-                img_paths.append(specified_img_path)
-                #print(f"Saved to specified directory: {specified_img_path}")
-                print(f"Image for {keywords}, created in collection.media folder")
-                
+                image = Image.open(BytesIO(img_response.content))
+
+                filename = f"{keywords.replace(' ', '_')}_{i}.png"
+
+                local_img_path = os.path.join(local_images_directory, filename)
+                image.save(local_img_path)
+                HTML_paths.append(filename)
+
+                specified_img_path = os.path.join(images_directory, filename)
+                image.save(specified_img_path)
+
+                print(f"Image for {keywords} saved")
+
             except Exception as e:
                 print(f"Could not download image {i} due to {e}")
-        
-        # Generate HTML
-        html = "<html>\n<head>\n<style>\n"
-        html += "body {text-align: center;}\n"
-        html += "img {margin: 10px;}\n"
-        html += "</style>\n</head>\n<body>\n"
-        
-        for img_path in HTML_paths:
-            img_filename = os.path.basename(img_path)
-            html += f'<img src="{img_filename}" alt="{keywords} image">\n<br>\n'
-        
-        html += "</body>\n</html>"
-        
+
+        # ===== HTML OUTPUT WITH CUSTOM TAG =====
+        html = "<image_anki>\n"
+        html += '<div class="image-title">تصاویر:</div>\n'
+        html += '<div class="image-container">\n'
+
+        for img_filename in HTML_paths:
+            html += f'  <img src="{img_filename}" alt="{keywords} image">\n'
+
+        html += "</div>\n</image_anki>"
+
         return html
+
     except ChunkedEncodingError as e:
-        return f'Error: {e}'
+        return ""
     
 
 # =========================
@@ -264,7 +247,16 @@ def scrape_and_process_google_translate(word, word_number):
     try:
         translated_text = GoogleTranslator(source='en', target='fa').translate(word)
         print(f"Word {word_number}: '{word}' translated by Google Translate")
-        return translated_text
+
+        html_output = f"""
+        <google_translate_aki>
+            <div class="gt-title">ترجمه از گوگل ترنزلیت:</div>
+            <div class="gt-text">{translated_text}</div>
+        </google_translate_aki>
+        """.strip()
+
+        return html_output
+
     except Exception as e:
         print(f"Google Translate FAILED for '{word}': {e}")
         return ""
@@ -675,3 +667,54 @@ def scrape_and_process_fastdic_audio(word, word_number):
     except Exception as e:
         print(f"[FASTDICT AUDIO] ERROR: {e}")
         return ""
+
+
+
+
+# =========================
+# B-Amooz Scraper
+# =========================
+
+def scrape_and_process_b_amooz(word, word_number):
+    print(f"[B-AMOOZ] ({word_number}) {word}")
+
+    url = f"https://dic.b-amooz.com/en/dictionary/w?word={word}"
+
+    try:
+        r = safe_get(url)
+
+        if r.status_code != 200:
+            return f"B-Amooz HTTP {r.status_code}"
+
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Main container
+        target_div = soup.find("div", class_="container mt-2")
+
+        if not target_div:
+            return f'B-Amooz: container not found for "{word}"'
+
+        # --------------------------------
+        # CLEANUP (similar philosophy to Fastdic)
+        # --------------------------------
+        for tag in target_div.find_all(["script", "style", "iframe", "svg"]):
+            tag.decompose()
+
+        # Remove all links but keep text
+        for a in target_div.find_all("a"):
+            a.replace_with(a.get_text())
+
+        content = target_div.prettify()
+
+        html = f"""
+        <div class="b-amooz">
+            {content}
+        </div>
+        """
+
+        print(f"[B-AMOOZ] DONE: {word}")
+        return html.replace('"', "'")
+
+    except Exception as e:
+        print(f"[B-AMOOZ] ERROR: {e}")
+        return f"B-Amooz error: {e}"

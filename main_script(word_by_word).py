@@ -13,7 +13,8 @@ from scraper_functions import (
     scrape_and_process_cambridge_define_with_selenium,
     scrape_and_process_dictionary_com,
     scrape_and_process_thesaurus_com,
-    scrape_and_process_fastdic_audio
+    scrape_and_process_fastdic_audio,
+    scrape_and_process_b_amooz
 )
 
 # =================================================
@@ -41,17 +42,18 @@ df = pd.read_excel(excel_file_path, header=None, names=["Words"])
 # OUTPUT COLUMNS
 # =================================================
 COLUMNS = [
-    "Processed_Content_Fastdic",
+    "Fastdic_Audio",
     "Processed_Content_Google_Translate",
     "Downloaded_Images_HTML",
+    "Processed_Content_Faraazin_Selenium",
+    "Processed_Content_B_Amooz",          
+    "Processed_Content_Fastdic",
     "Dictionary_com",
     "Thesaurus_com",
-    "Processed_Content_Faraazin_Selenium",
-    "Processed_Content_Google_Define_Selenium_processed",
-    "Processed_Content_Cambridge_Define_Selenium",
-    "Fastdic_Audio",
-    "Anki_US_Sound_Tag",       # <-- NEW: To store [sound:filename]
-    "Anki_Front_Field"         # <-- NEW: To store [sound:filename] word
+    #"Processed_Content_Google_Define_Selenium_processed",
+    #"Processed_Content_Cambridge_Define_Selenium",
+    "Anki_US_Sound_Tag",       
+    "Anki_Front_Field"        
 
 ]
 
@@ -72,7 +74,8 @@ def autosave(df, suffix="autosave"):
 # =================================================
 def run_non_selenium_tasks(word, word_number):
     return {
-        #"Processed_Content_Fastdic": scrape_and_process_fastdic(word, word_number),
+        "Processed_Content_Fastdic": scrape_and_process_fastdic(word, word_number),
+        "Processed_Content_B_Amooz": scrape_and_process_b_amooz(word, word_number),  
         "Processed_Content_Google_Translate": scrape_and_process_google_translate(word, word_number),
         "Downloaded_Images_HTML": download_images(word, word_number, n=4),
         "Dictionary_com": scrape_and_process_dictionary_com(word, word_number),

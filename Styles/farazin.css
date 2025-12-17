@@ -1,0 +1,94 @@
+.translate-details {
+font-family: IRANSans, sans-serif;
+direction: rtl;
+text-align: right;
+background-color: #f9f9f9;
+border-radius: 8px;
+padding: 20px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+max-width: 800px;
+margin: 0 auto;
+}
+.translate-details p strong {
+font-size: 1.5rem;
+color: #333;
+margin-bottom: 15px;
+display: block;
+}
+.translate-details ul {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+.translate-details > ul > li.ng-scope {
+margin-bottom: 25px;
+border-bottom: 1px solid #eee;
+padding-bottom: 20px;
+}
+.translate-details > ul > li.ng-scope:last-child {
+border-bottom: none;
+padding-bottom: 0;
+}
+.translate-details p.m-b-5 {
+font-size: 1.2rem;
+font-weight: 600;
+color: #007bff; /* Inspired from --blue */
+margin-bottom: 10px;
+background-color: #f0f8ff;
+padding: 8px 12px;
+border-radius: 4px;
+}
+.translate-details li.meanings {
+font-size: 1.1rem;
+color: #4e4e4e; /* Inspired from .color-gray */
+margin-bottom: 15px;
+}
+.translate-details li.meanings span.ng-binding {
+background-color: #e9ecef;
+padding: 4px 8px;
+border-radius: 4px;
+margin: 0 4px 4px 0;
+display: inline-block;
+transition: background-color 0.3s ease;
+}
+.translate-details li.meanings span.ng-binding:hover {
+background-color: #dee2e6;
+}
+.translate-details p.m-t-10 {
+font-size: 1.1rem;
+font-weight: 500;
+color: #28a745; /* Inspired from --green */
+margin: 15px 0 10px;
+}
+.translate-details ul.ltr {
+direction: ltr;
+text-align: left;
+padding-left: 20px;
+}
+.translate-details ul.ltr li.ng-scope {
+margin-bottom: 15px;
+padding: 10px;
+background-color: #fff;
+border-left: 4px solid #007bff;
+border-radius: 4px;
+box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.translate-details ul.ltr p strong {
+color: inherit; /* Inspired from --gray-dark */
+font-size: 1rem;
+}
+.translate-details ul.ltr p.ng-binding {
+margin: 5px 0;
+color: #6c757d; /* Inspired from --gray */
+}
+.translate-details ul.ltr p.ng-scope strong {
+color: #dc3545; /* Inspired from --red for synonyms label */
+}
+.translate-details ul.ltr span.ng-binding {
+color: #212529;
+margin-right: 5px;
+}
+.translate-details .line {
+border-top: 1px dashed #ddd;
+margin: 10px 0;
+}
