@@ -1,14 +1,14 @@
-    
- .mt-2, .my-2 {
+.mt-2, .my-2 {
 	margin-top: .5rem !important;
 }
     @charset "UTF-8";
 /*!
- * Bootstrap v4.3.1 (https://getbootstrap.com/)
+ * Bootstrap v4.3.1[](https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
  * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */:root {
+ * Licensed under MIT[](https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+:root {
   --blue:#007bff;
   --indigo:#6610f2;
   --purple:#6f42c1;
@@ -53,8 +53,62 @@
   Consolas,
   "Liberation Mono",
   "Courier New",
-  monospace
+  monospace;
+
+  /* Theme-aware variables */
+  --bg-main: #f9f9f9;
+  --bg-card: #fff;
+  --bg-light: #f8f9fa;
+  --bg-example: #f0f8ff;
+  --text-primary: #212529;
+  --text-muted: #6c757d;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0,0,0,.08);
+
+  --pos-noun-bg: #2980b9;
+  --pos-verb-bg: #1abc9c;
+  --pos-adverb-bg: #ff2ecc71;
+  --pos-adjective-bg: #e67e22;
+  --pos-preposition-bg: #3498db;
+  --pos-pronoun-bg: #333;
+  --word-row-bg: #333;
+  --color-secondary: #43a047;
+  --color-gray: #4e4e4e;
+  --bg-red: #f44336;
+  --bg-desc: #f0f4c3;
+  --border-desc: #dce775;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-main: #1e1e1e;
+    --bg-card: #2d2d2d;
+    --bg-light: #2a2a2a;
+    --bg-example: #1a2a3a;
+    --text-primary: #e0e0e0;
+    --text-muted: #aaaaaa;
+    --border-color: #444444;
+    --shadow-color: rgba(0,0,0,.4);
+
+    --pos-noun-bg: #20638f;
+    --pos-verb-bg: #148f77;
+    --pos-adverb-bg: #cc229f71;
+    --pos-adjective-bg: #b8651b;
+    --pos-preposition-bg: #2a7aaf;
+    --pos-pronoun-bg: #222;
+    --word-row-bg: #222;
+    --color-secondary: #2e7032;
+    --color-gray: #b0b0b0;
+    --bg-red: #c62828;
+    --bg-desc: #3a4a20;
+    --border-desc: #5a6a30;
+  }
+
+  .color-on-secondary {
+    color: #fff !important;
+  }
+}
+
 *,
 ::after,
 ::before {
@@ -256,7 +310,7 @@ small {
   height:0;
   margin:.5rem 0;
   overflow:hidden;
-  border-top:1px solid #e9ecef
+  border-top:1px solid var(--border-color)
 }
 .card {
   position:relative;
@@ -266,10 +320,11 @@ small {
   flex-direction:column;
   min-width:0;
   word-wrap:break-word;
-  background-color:#fff;
+  background-color:var(--bg-card);
   background-clip:border-box;
-  border:1px solid rgba(0,0,0,.125);
-  border-radius:.25rem
+  border:1px solid var(--border-color);
+  border-radius:.25rem;
+  box-shadow:0 2px 5px 0 var(--shadow-color),0 2px 10px 0 var(--shadow-color);
 }
 .card>.list-group:first-child .list-group-item:first-child {
   border-top-left-radius:.25rem;
@@ -282,8 +337,8 @@ small {
 .card-header {
   padding:.75rem 1.25rem;
   margin-bottom:0;
-  background-color:rgba(0,0,0,.03);
-  border-bottom:1px solid rgba(0,0,0,.125)
+  background-color:var(--bg-light);
+  border-bottom:1px solid var(--border-color)
 }
 .card-header:first-child {
   border-radius:calc(.25rem - 1px) calc(.25rem - 1px) 0 0
@@ -326,7 +381,7 @@ a.badge-danger:focus {
 }
 .badge-light {
   color:#212529;
-  background-color:#f8f9fa
+  background-color:var(--bg-light)
 }
 a.badge-light:focus,
 a.badge-light:hover {
@@ -381,8 +436,8 @@ a.badge-dark:focus {
   display:block;
   padding:.75rem 1.25rem;
   margin-bottom:-1px;
-  background-color:#fff;
-  border:1px solid rgba(0,0,0,.125)
+  background-color:var(--bg-card);
+  border:1px solid var(--border-color)
 }
 .list-group-item:first-child {
   border-top-left-radius:.25rem;
@@ -397,7 +452,7 @@ a.badge-dark:focus {
 .list-group-item:disabled {
   color:#6c757d;
   pointer-events:none;
-  background-color:#fff
+  background-color:var(--bg-card)
 }
 .list-group-flush .list-group-item {
   border-right:0;
@@ -445,7 +500,7 @@ a.badge-dark:focus {
   }
 }
 .border {
-  border:1px solid #dee2e6!important
+  border:1px solid var(--border-color)!important
 }
 .rounded {
   border-radius:.25rem!important
@@ -588,7 +643,7 @@ a.text-dark:hover {
   color:#121416!important
 }
 .text-muted {
-  color:#6c757d!important
+  color:var(--text-muted)!important
 }
 .text-decoration-none {
   text-decoration:none!important
@@ -655,7 +710,7 @@ a.text-dark:hover {
  *
  */
 .red {
-  background-color:#f44336!important
+  background-color:var(--bg-red)!important
 }
 a {
   cursor:pointer;
@@ -684,7 +739,7 @@ h6 {
   font-weight:300
 }
 .text-dark {
-  color:#212121!important
+  color:var(--text-primary)!important
 }
 a.text-dark:focus,
 a.text-dark:hover {
@@ -809,7 +864,7 @@ a.waves-light {
     transform:translate3d(0,-100%,0)
   }
 }
-/*!
+/*! 
  * animate.css -http://daneden.me/animate
  * Version - 3.7.0
  * Licensed under the MIT license - http://opensource.org/licenses/MIT
@@ -1789,7 +1844,7 @@ a.waves-light {
   cursor:pointer;
   border:0;
   border-radius:.125rem;
-  box-shadow:0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
+  box-shadow:0 2px 5px 0 var(--shadow-color),0 2px 10px 0 var(--shadow-color);
   transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
   padding:.84rem 2.14rem;
   font-size:.81rem
@@ -1798,188 +1853,18 @@ a.waves-light {
 .btn:focus,
 .btn:hover {
   outline:0;
-  box-shadow:0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15)
+  box-shadow:0 5px 11px 0 var(--shadow-color),0 4px 15px 0 var(--shadow-color)
 }
 
 .btn:disabled:active,
 .btn:disabled:focus,
 .btn:disabled:hover {
-  box-shadow:0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12)
+  box-shadow:0 2px 5px 0 var(--shadow-color),0 2px 10px 0 var(--shadow-color)
 }
 a.btn:not([href]):not([tabindex]),
 a.btn:not([href]):not([tabindex]):focus,
 a.btn:not([href]):not([tabindex]):hover {
   color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#000
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#000
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-.card {
-  font-weight:400;
-  border:0;
-  box-shadow:0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12)
 }
 .card[class*=border] {
   border:1px solid #9e9e9e;
@@ -2032,86 +1917,6 @@ table.table a {
 }
 .btn-rounded {
   border-radius:10em
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
-}
-a.btn:not([href]):not([tabindex]),
-a.btn:not([href]):not([tabindex]):focus,
-a.btn:not([href]):not([tabindex]):hover {
-  color:#fff
 }
 a.btn:not([href]):not([tabindex]),
 a.btn:not([href]):not([tabindex]):focus,
@@ -2306,16 +2111,16 @@ a.btn:not([href]):not([tabindex]):hover {
   }
 }
 /*!
- * ClockPicker v0.0.7 for jQuery (http://weareoutman.github.io/clockpicker/)
+ * ClockPicker v0.0.7 for jQuery[](http://weareoutman.github.io/clockpicker/)
  * Copyright 2014 Wang Shenwei.
- * Licensed under MIT (https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
+ * Licensed under MIT[](https://github.com/weareoutman/clockpicker/blob/gh-pages/LICENSE)
  *
  * Further modified
  * Copyright 2015 Ching Yaw Hao.
  *
- * Bootstrap v3.1.1 (http://getbootstrap.com)
+ * Bootstrap v3.1.1[](http://getbootstrap.com)
  * Copyright 2011-2014 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * Licensed under MIT[](https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 @keyframes pulse {
   from {
@@ -2466,23 +2271,23 @@ a.btn:not([href]):not([tabindex]):hover {
   src:url(/fonts/ttf/material-icons.ttf) format('truetype')
 }
 .color-secondary {
-  color:#43a047
+  color:var(--color-secondary)
 }
 .color-on-secondary {
   color:#000
 }
 .color-gray {
-  color:#4e4e4e
+  color:var(--color-gray)
 }
 .list-item {
   list-style:none;
   padding:.8rem 1rem;
   cursor:pointer;
-  border-top:1px solid #ddd;
+  border-top:1px solid var(--border-color);
   font-size:85%
 }
 .list-item:hover {
-  background-color:#f5f5f5
+  background-color:var(--bg-light)
 }
 .list-item a {
   display:block;
@@ -2512,30 +2317,30 @@ a.btn:not([href]):not([tabindex]):hover {
   text-decoration:none!important
 }
 .word-row {
-  background-color:#333;
+  background-color:var(--word-row-bg);
   margin-left:-15px;
   margin-right:-15px
 }
 .pos-verb-bg {
-  background-color:#1abc9c
+  background-color:var(--pos-verb-bg)
 }
 .pos-adverb-bg {
-  background-color:#ff2ecc71
+  background-color:var(--pos-adverb-bg)
 }
 .pos-adjective-bg {
-  background-color:#e67e22
+  background-color:var(--pos-adjective-bg)
 }
 .pos-preposition-bg {
-  background-color:#3498db
+  background-color:var(--pos-preposition-bg)
 }
 .pos-noun-bg {
-  background-color:#2980b9
+  background-color:var(--pos-noun-bg)
 }
 .pos-pronoun-bg {
-  background-color:#333
+  background-color:var(--pos-pronoun-bg)
 }
 .word-row-side {
-  background-color:#fff;
+  background-color:var(--bg-card);
   margin-left:8px;
   margin-right:8px
 }
@@ -2544,7 +2349,7 @@ a.btn:not([href]):not([tabindex]):hover {
   margin-right:0
 }
 .word-row .dropdown-divider {
-  border-top:1px solid #ddd;
+  border-top:1px solid var(--border-color);
   margin:0
 }
 .word-row .list-item {
@@ -2556,14 +2361,15 @@ a.btn:not([href]):not([tabindex]):hover {
 }
 .word-row .prepositions-card {
   font-size:12px;
-  border:1px solid #ddd
+  border:1px solid var(--border-color);
+  background-color: var(--bg-card);
 }
 .word-row .desc {
   margin:.5rem;
   padding:1rem;
-  background-color:#f0f4c3;
+  background-color:var(--bg-desc);
   border-radius:10px;
-  border:1px solid #dce775
+  border:1px solid var(--border-desc)
 }
 .word-row .desc span {
   font-size:90%
@@ -2825,10 +2631,10 @@ image_anki {
   max-width: 900px;
   margin: 40px auto;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: var(--bg-main);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  color: inherit; /* مهم: رنگ متن از تم اصلی ارث‌بری می‌شود تا در حالت dark مشکلی پیش نیاید */
+  box-shadow: 0 4px 20px var(--shadow-color);
+  color: var(--text-primary);
 }
 
 .image-title {
@@ -2837,7 +2643,7 @@ image_anki {
   color: #007bff;
   margin-bottom: 20px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--border-color);
 }
 
 .image-container {
@@ -2852,20 +2658,18 @@ image_anki {
   max-width: 100%;
   height: auto;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   object-fit: cover;
 }
 
-/* حالت بزرگ‌تر برای تصاویر (مناسب ۴ تصویر در یک ردیف در دسکتاپ) */
 @media (min-width: 768px) {
   .image-container img {
-    width: calc(25% - 15px); /* تقریباً ۴ تصویر در یک ردیف با gap */
+    width: calc(25% - 15px);
     max-height: 250px;
   }
 }
 
-/* حالت موبایل: دو تصویر در هر ردیف */
 @media (max-width: 767px) {
   .image-container img {
     width: calc(50% - 10px);
@@ -2873,34 +2677,11 @@ image_anki {
   }
 }
 
-/* افکت hover زیبا */
 .image-container img:hover {
   transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 25px var(--shadow-color);
   z-index: 10;
 }
-
-/* برای حالت dark theme: پس‌زمینه کمی تیره‌تر و سایه ملایم‌تر */
-@media (prefers-color-scheme: dark) {
-  image_anki {
-    background-color: #1e1e1e;
-  }
-  
-  .image-title {
-    color: #6ab7ff;
-    border-bottom-color: #444;
-  }
-  
-  .image-container img {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  }
-  
-  .image-container img:hover {
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
-  }
-}
-
-
 
 google_translate_aki {
   font-family: IRANSans, 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -2909,10 +2690,9 @@ google_translate_aki {
   max-width: 600px;
   margin: 30px auto;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-main);
   border-radius: 12px;
 }
-
 
 .results__container {
   font-family: IRANSans, 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -2921,11 +2701,11 @@ google_translate_aki {
   max-width: 900px;
   margin: 40px auto;
   padding: 30px;
-  background-color: #f9f9f9; /* Light background for visibility */
+  background-color: var(--bg-main);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px var(--shadow-color);
   line-height: 1.6;
-  color: inherit; /* Inherit text color to adapt to themes */
+  color: var(--text-primary);
 }
 
 .row {
@@ -2942,7 +2722,7 @@ google_translate_aki {
 
 .meaning-section header.results__header {
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-light);
   border-radius: 8px;
   margin-bottom: 30px;
 }
@@ -2951,7 +2731,7 @@ google_translate_aki {
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
-  color: #6c757d; /* Neutral gray */
+  color: var(--text-muted);
   margin-bottom: 15px;
 }
 
@@ -2966,7 +2746,7 @@ google_translate_aki {
 .results__header h1 {
   font-size: 2.5rem;
   font-weight: 600;
-  color: #007bff; /* Blue for word */
+  color: #007bff;
   text-align: center;
   margin: 10px 0;
 }
@@ -2978,7 +2758,7 @@ google_translate_aki {
 
 .results__header--audios-w span.audio {
   font-size: 1.4rem;
-  color: #495057;
+  color: var(--text-primary);
   cursor: pointer;
   margin: 0 10px;
 }
@@ -2987,13 +2767,13 @@ google_translate_aki {
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-color: #007bff; /* Placeholder for icon */
+  background-color: #007bff;
   border-radius: 50%;
 }
 
 .results__header--column .results__extra {
   font-size: 1.1rem;
-  color: #28a745; /* Green for extras */
+  color: #28a745;
 }
 
 .results__extra-item strong {
@@ -3004,7 +2784,7 @@ google_translate_aki {
   font-size: 1.8rem;
   font-weight: 600;
   color: #007bff;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--border-color);
   padding-bottom: 8px;
   margin: 30px 0 20px;
   text-align: right;
@@ -3013,21 +2793,21 @@ google_translate_aki {
 .result {
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #fff;
+  background-color: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 5px var(--shadow-color);
 }
 
 .meaning .pos {
   display: flex;
   align-items: center;
   font-size: 1rem;
-  color: #6c757d;
+  color: var(--text-muted);
   margin-bottom: 10px;
 }
 
 .pos .p {
-  background-color: #e9ecef;
+  background-color: var(--bg-light);
   padding: 4px 8px;
   border-radius: 4px;
   margin-left: 8px;
@@ -3039,7 +2819,7 @@ google_translate_aki {
 }
 
 .cefr {
-  background-color: #ffc107; /* Yellow for level */
+  background-color: #ffc107;
   color: #212529;
   padding: 4px 8px;
   border-radius: 4px;
@@ -3049,7 +2829,7 @@ google_translate_aki {
 .meaning p {
   font-size: 1.2rem;
   font-weight: 500;
-  color: inherit; /* Inherit for theme adaptability */
+  color: var(--text-primary);
   margin-bottom: 10px;
 }
 
@@ -3060,12 +2840,12 @@ google_translate_aki {
 
 .figure-image img {
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-color);
 }
 
 .sentences .result__sentences {
-  background-color: #f0f8ff;
-  border-right: 4px solid #007bff; /* RTL border */
+  background-color: var(--bg-example);
+  border-right: 4px solid #007bff;
   padding: 12px;
   margin: 10px 0;
   border-radius: 6px;
@@ -3074,7 +2854,7 @@ google_translate_aki {
 .sentence p {
   margin: 5px 0;
   font-style: italic;
-  color: inherit;
+  color: var(--text-primary);
 }
 
 .more-sentences-wrapper {
@@ -3094,19 +2874,19 @@ google_translate_aki {
 
 .definition {
   font-size: 1.1rem;
-  color: inherit;
+  color: var(--text-primary);
 }
 
 .synonyms_antonyms--title strong {
-  color: #28a745; /* Green for synonyms */
+  color: #28a745;
 }
 
 .synonyms_antonyms--antonyms .synonyms_antonyms--title strong {
-  color: #dc3545; /* Red for antonyms */
+  color: #dc3545;
 }
 
 .synonyms_antonyms--content span {
-  background-color: #e9ecef;
+  background-color: var(--bg-light);
   padding: 4px 8px;
   border-radius: 4px;
   margin: 4px;
@@ -3125,9 +2905,9 @@ google_translate_aki {
 .results__english-idioms-container .results__english-idioms {
   margin-bottom: 15px;
   padding: 10px;
-  background-color: #fff;
+  background-color: var(--bg-card);
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 .results__english-idioms p.english a {
@@ -3142,7 +2922,7 @@ google_translate_aki {
 
 .results__english-idioms p.persian {
   font-size: 1rem;
-  color: inherit;
+  color: var(--text-primary);
 }
 
 .ltr {
@@ -3150,7 +2930,6 @@ google_translate_aki {
   text-align: left;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .results__container {
     padding: 20px;
@@ -3162,22 +2941,21 @@ google_translate_aki {
   }
 }
 
-
-
 .translate-details {
 font-family: IRANSans, sans-serif;
 direction: rtl;
 text-align: right;
-background-color: #f9f9f9;
+background-color: var(--bg-main);
 border-radius: 8px;
 padding: 20px;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+box-shadow: 0 2px 10px var(--shadow-color);
 max-width: 800px;
 margin: 0 auto;
+color: var(--text-primary);
 }
 .translate-details p strong {
 font-size: 1.5rem;
-color: #333;
+color: var(--text-primary);
 margin-bottom: 15px;
 display: block;
 }
@@ -3188,7 +2966,7 @@ margin: 0;
 }
 .translate-details > ul > li.ng-scope {
 margin-bottom: 25px;
-border-bottom: 1px solid #eee;
+border-bottom: 1px solid var(--border-color);
 padding-bottom: 20px;
 }
 .translate-details > ul > li.ng-scope:last-child {
@@ -3198,19 +2976,19 @@ padding-bottom: 0;
 .translate-details p.m-b-5 {
 font-size: 1.2rem;
 font-weight: 600;
-color: #007bff; /* Inspired from --blue */
+color: #007bff;
 margin-bottom: 10px;
-background-color: #f0f8ff;
+background-color: var(--bg-light);
 padding: 8px 12px;
 border-radius: 4px;
 }
 .translate-details li.meanings {
 font-size: 1.1rem;
-color: #4e4e4e; /* Inspired from .color-gray */
+color: var(--text-muted);
 margin-bottom: 15px;
 }
 .translate-details li.meanings span.ng-binding {
-background-color: #e9ecef;
+background-color: var(--bg-light);
 padding: 4px 8px;
 border-radius: 4px;
 margin: 0 4px 4px 0;
@@ -3223,7 +3001,7 @@ background-color: #dee2e6;
 .translate-details p.m-t-10 {
 font-size: 1.1rem;
 font-weight: 500;
-color: #28a745; /* Inspired from --green */
+color: #28a745;
 margin: 15px 0 10px;
 }
 .translate-details ul.ltr {
@@ -3234,42 +3012,41 @@ padding-left: 20px;
 .translate-details ul.ltr li.ng-scope {
 margin-bottom: 15px;
 padding: 10px;
-background-color: #fff;
+background-color: var(--bg-card);
 border-left: 4px solid #007bff;
 border-radius: 4px;
-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+box-shadow: 0 1px 3px var(--shadow-color);
 }
 .translate-details ul.ltr p strong {
-color: inherit; /* Inspired from --gray-dark */
+color: var(--text-primary);
 font-size: 1rem;
 }
 .translate-details ul.ltr p.ng-binding {
 margin: 5px 0;
-color: #6c757d; /* Inspired from --gray */
+color: var(--text-muted);
 }
 .translate-details ul.ltr p.ng-scope strong {
-color: #dc3545; /* Inspired from --red for synonyms label */
+color: #dc3545;
 }
 .translate-details ul.ltr span.ng-binding {
-color: #212529;
+color: var(--text-primary);
 margin-right: 5px;
 }
 .translate-details .line {
-border-top: 1px dashed #ddd;
+border-top: 1px dashed var(--border-color);
 margin: 10px 0;
 }
-
 
 .dictionary-com {
   font-family: 'Open Sans', IRANSans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   max-width: 900px;
   margin: 40px auto;
   padding: 30px;
-  background-color: #ffffff;
+  background-color: var(--bg-main);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px var(--shadow-color);
   line-height: 1.6;
-  color: inherit; /* مهم: رنگ متن از تم اصلی ارث‌بری می‌شود تا در حالت dark مشکلی پیش نیاید */
+  color: var(--text-primary);
 }
 
 .dictionary-com h1 {
@@ -3283,7 +3060,7 @@ margin: 10px 0;
 .dictionary-com > div:first-of-type {
   text-align: center;
   font-size: 1.4rem;
-  color: #6c757d;
+  color: var(--text-muted);
   margin-bottom: 20px;
 }
 
@@ -3292,14 +3069,13 @@ margin: 10px 0;
   margin: 20px auto;
 }
 
-/* Headword and pronunciation */
 .box-headword-audio-pronunciation {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-light);
   border-radius: 8px;
   margin-bottom: 30px;
 }
@@ -3307,7 +3083,7 @@ margin: 10px 0;
 .box-headword-type h1.hdr-headword,
 .box-headword-type span.hdr-headword {
   font-size: 2.5rem;
-  color: #343a40;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -3325,28 +3101,26 @@ margin: 10px 0;
 .txt-phonetic,
 .txt-ipa {
   font-size: 1.6rem;
-  color: #495057;
+  color: var(--text-muted);
   margin-left: 15px;
 }
 
-/* Part of speech sections */
 .box-posb h2 {
   font-size: 1.8rem;
   font-weight: 600;
   color: #007bff;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--border-color);
   padding-bottom: 8px;
   margin: 30px 0 20px;
 }
 
 .box-inflected-form-sets {
   font-style: italic;
-  color: #6c757d;
+  color: var(--text-muted);
   margin-bottom: 15px;
   font-size: 1.1rem;
 }
 
-/* Definitions */
 .list-definition {
   padding-left: 0;
   list-style: none;
@@ -3376,12 +3150,11 @@ margin: 10px 0;
 
 .txt-variant-label-short em {
   font-style: italic;
-  color: #495057;
+  color: var(--text-muted);
 }
 
-/* Examples */
 .box-examples {
-  background-color: #f0f8ff;
+  background-color: var(--bg-example);
   border-left: 4px solid #007bff;
   padding: 12px 16px;
   margin: 12px 0;
@@ -3391,10 +3164,9 @@ margin: 10px 0;
 .txt-example {
   margin: 6px 0;
   font-style: italic;
-  color: #495057;
+  color: var(--text-muted);
 }
 
-/* Sub-definitions (for idioms) */
 .list-sub-definition {
   list-style: lower-alpha;
   padding-left: 30px;
@@ -3405,24 +3177,21 @@ margin: 10px 0;
   margin-bottom: 10px;
 }
 
-/* Idioms strong emphasis */
 .txt-variant-label-short strong {
   color: #dc3545;
   font-weight: 600;
 }
 
-/* Sections */
 .sec-item-entry-group {
   margin-bottom: 40px;
   padding-bottom: 30px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sec-item-entry-group:last-of-type {
   border-bottom: none;
 }
 
-/* Example Sentences section */
 .sec-example-sentences h2,
 .sec-related-words h2,
 .sec-other-word-forms h2 {
@@ -3435,7 +3204,7 @@ margin: 10px 0;
 
 .txt-disclaimer {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--text-muted);
   font-style: italic;
   margin-bottom: 20px;
 }
@@ -3446,7 +3215,7 @@ margin: 10px 0;
 
 .txt-source {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--text-muted);
   margin-top: 8px;
 }
 
@@ -3459,7 +3228,6 @@ margin: 10px 0;
   text-decoration: underline;
 }
 
-/* Related Words */
 .list-related-word {
   display: flex;
   flex-wrap: wrap;
@@ -3469,21 +3237,20 @@ margin: 10px 0;
 }
 
 .common-lk-chip {
-  background-color: #e9ecef;
+  background-color: var(--bg-light);
   padding: 8px 14px;
   border-radius: 20px;
   text-decoration: none;
-  color: #495057;
+  color: var(--text-primary);
   font-weight: 500;
   transition: background-color 0.3s;
 }
 
 .common-lk-chip:hover {
   background-color: #dee2e6;
-  color: #212529;
+  color: var(--text-primary);
 }
 
-/* Other Word Forms */
 .list-other-word-forms {
   list-style: none;
   padding: 0;
@@ -3495,10 +3262,9 @@ margin: 10px 0;
 }
 
 .list-other-word-forms strong {
-  color: #343a40;
+  color: var(--text-primary);
 }
 
-/* More Idioms list */
 .list-more-idioms {
   columns: 2;
   column-gap: 30px;
@@ -3519,11 +3285,10 @@ margin: 10px 0;
   text-decoration: underline;
 }
 
-/* Thesaurus bonus section */
 .thesaurus {
   margin-top: 40px;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-light);
   border-radius: 8px;
   border-left: 5px solid #6f42c1;
 }
@@ -3539,7 +3304,6 @@ margin: 10px 0;
   margin-right: 8px;
 }
 
-/* General links */
 a {
   color: #007bff;
   text-decoration: none;
@@ -3549,14 +3313,12 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Horizontal rules */
 hr {
   border: none;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid var(--border-color);
   margin: 30px 0;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .box-headword-audio-pronunciation {
     flex-direction: column;
@@ -3571,4 +3333,23 @@ hr {
     padding: 20px;
     margin: 20px;
   }
+}
+
+@media (prefers-color-scheme: dark) {
+  .image-title,
+  .results__header h1,
+  .dictionary-com h1,
+  .group-section h2,
+  .box-posb h2 {
+    color: #6ab7ff;
+  }
+
+  .box-examples,
+  .sentences .result__sentences {
+    border-left-color: #6ab7ff;
+  }
+}
+
+.custom-card-header {
+  background-color: var(--bg-light);
 }
