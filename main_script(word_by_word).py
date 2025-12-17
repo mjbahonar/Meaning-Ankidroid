@@ -20,7 +20,7 @@ from scraper_functions import (
 # CONFIGURATION
 # =================================================
 AUTOSAVE_EVERY = 5          # 💾 autosave every N words
-ENABLE_PARALLEL = True     # ⚡ turn parallel ON/OFF
+ENABLE_PARALLEL = False     # ⚡ turn parallel ON/OFF
 MAX_WORKERS = 3            # threads for non-selenium tasks
 
 # =================================================
@@ -49,7 +49,9 @@ COLUMNS = [
     "Processed_Content_Faraazin_Selenium",
     "Processed_Content_Google_Define_Selenium_processed",
     "Processed_Content_Cambridge_Define_Selenium",
-    "Fastdic_Audio"
+    "Fastdic_Audio",
+    "Anki_US_Sound_Tag",       # <-- NEW: To store [sound:filename]
+    "Anki_Front_Field"         # <-- NEW: To store [sound:filename] word
 
 ]
 
@@ -74,8 +76,8 @@ def run_non_selenium_tasks(word, word_number):
         "Processed_Content_Google_Translate": scrape_and_process_google_translate(word, word_number),
         "Downloaded_Images_HTML": download_images(word, word_number, n=4),
         "Dictionary_com": scrape_and_process_dictionary_com(word, word_number),
-        #"Thesaurus_com": scrape_and_process_thesaurus_com(word, word_number),
-        "Processed_Content_Fastdic_Audio": scrape_and_process_fastdic_audio(word, word_number)
+        "Thesaurus_com": scrape_and_process_thesaurus_com(word, word_number),
+        "Fastdic_Audio": scrape_and_process_fastdic_audio(word, word_number)
     }
 
 # =================================================
@@ -104,6 +106,26 @@ for idx, row in tqdm(df.iterrows(), total=len(df), desc="Processing words"):
 
     for col, value in results.items():
         df.at[idx, col] = value
+
+    # -------------------------------
+    # POST-PROCESSING FOR ANKI (NEW STEP)
+    # -------------------------------
+    # 1. Manually construct the sound tag for US pronunciation.
+    #    We rely on the scraper function having already downloaded the file.
+    
+    # Construct the filename structure: fastdic_word_us.mp3
+    safe_word = word.replace(' ', '_') # Filename should use underscores if it has spaces
+    filename = f"fastdic_{safe_word}_us.mp3"
+    
+    # Construct the Anki sound tag: [sound:filename]
+    anki_sound_tag = f"[sound:{filename}]"
+    
+    # 2. Store the sound tag in the new dedicated column
+    df.at[idx, "Anki_US_Sound_Tag"] = anki_sound_tag
+    
+    # 3. Create the final Anki Front Field (Sound Tag + Word)
+    # This column will be mapped to the Front Field of your Anki card.
+    df.at[idx, "Anki_Front_Field"] = f"{word} {anki_sound_tag}"    
 
     # -------------------------------
     # SELENIUM (SEQUENTIAL ONLY)

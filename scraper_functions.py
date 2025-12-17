@@ -214,11 +214,11 @@ def scrape_and_process_fastdic(word, word_number):
         </div>
         """
 
-        print(f"[FASTDICT] DONE: {word}")
+        print(f"[FASTDIC] DONE: {word}")
         return html.replace('"', "'")
 
     except Exception as e:
-        print(f"[FASTDICT] ERROR: {e}")
+        print(f"[FASTDIC] ERROR: {e}")
         return f"Fastdic error: {e}"
 
     
@@ -462,7 +462,9 @@ def scrape_and_process_dictionary_com(word, word_number):
             <div>{phon.text if phon else ''} {ipa.text if ipa else ''}</div>
             {audio_html}
             {sec('id-sec-entry-group-dcom')}
-            {sec('id-sec-entry-group-british')}
+        """    
+        #    {sec('id-sec-entry-group-british')}        ###in order not to calculate this function
+        html += f"""
             {sec('id-sec-example-sentences')}
             {sec('id-sec-related-words')}
             {sec('id-sec-other-word-forms')}

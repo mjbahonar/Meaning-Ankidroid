@@ -18,6 +18,36 @@ from scraper_functions import (
 from deep_translator import GoogleTranslator
 
 # -------------------------------------------------
+# HELPER FUNCTION FOR ANKI TAGS (NEW)
+# -------------------------------------------------
+def create_anki_fields(row):
+    """
+    Constructs the Anki sound tag and the combined front field
+    based on the word, assuming the file was successfully downloaded
+    by scrape_and_process_fastdic_audio.
+    """
+    word = str(row["Words"]).strip()
+    
+    if not word or word.lower() == "nan":
+        return "", ""
+        
+    # 1. Prepare word for a safe filename (replace spaces with underscores)
+    safe_word = word.replace(' ', '_') 
+    
+    # 2. Construct the filename: fastdic_word_us.mp3
+    filename = f"fastdic_{safe_word}_us.mp3"
+    
+    # 3. Construct the Anki sound tag: [sound:filename]
+    anki_sound_tag = f"[sound:{filename}]"
+    
+    # 4. Create the final Anki Front Field (Sound Tag + Word)
+    anki_front_field = f"{word} {anki_sound_tag}"
+    
+    # Return as a tuple to unpack into two new columns
+    return anki_sound_tag, anki_front_field
+
+
+# -------------------------------------------------
 # PATHS
 # -------------------------------------------------
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,6 +78,13 @@ df['Processed_Content_Faraazin_Selenium'] = df.apply(lambda row: scrape_and_proc
 #df['Processed_Content_Google_Define_Selenium_processed'] = df.apply(lambda row: scrape_and_process_google_define_with_selenium(row['Words'], row.name + 1), axis=1)
 #df['scrape_and_process_cambridge_define_with_selenium'] = df.apply(lambda row: scrape_and_process_cambridge_define_with_selenium(row['Words'], row.name + 1), axis=1)
 df["Fastdic_Audio"] = df.apply(lambda row: scrape_and_process_fastdic_audio(row["Words"], row.name + 1),axis=1)
+
+# -------------------------------------------------
+# ANKI FRONT FIELD POST-PROCESSING (NEW STEP)
+# -------------------------------------------------
+# This creates two new columns by applying the helper function row-wise
+df[["Anki_US_Sound_Tag", "Anki_Front_Field"]] = df.apply(create_anki_fields,axis=1,result_type='expand')
+
 
 # -------------------------------------------------
 # SAVE OUTPUT FILES INTO Output/
