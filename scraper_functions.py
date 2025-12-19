@@ -243,7 +243,7 @@ def scrape_and_process_faraazin_with_selenium(word, word_number):
 # =========================
 
 def scrape_and_process_google_translate(word, word_number):
-    time.sleep(4 + random.uniform(0, 4))
+    time.sleep(1 + random.uniform(0, 2))
     try:
         translated_text = GoogleTranslator(source='en', target='fa').translate(word)
         print(f"Word {word_number}: '{word}' translated by Google Translate")

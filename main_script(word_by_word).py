@@ -34,7 +34,7 @@ os.makedirs(output_dir, exist_ok=True)
 # =================================================
 # INPUT FILE
 # =================================================
-baseName = "words-test"
+baseName = "words"
 excel_file_path = os.path.join(script_dir, baseName + ".xlsx")
 df = pd.read_excel(excel_file_path, header=None, names=["Words"])
 
