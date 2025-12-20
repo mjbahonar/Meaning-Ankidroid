@@ -23,6 +23,7 @@ from scraper_functions import (
 AUTOSAVE_EVERY = 5          # 💾 autosave every N words
 ENABLE_PARALLEL = False     # ⚡ turn parallel ON/OFF
 MAX_WORKERS = 3            # threads for non-selenium tasks
+#TIMEOUT_SECONDS = 30       # ⏱ timeout for non-selenium tasks   
 
 # =================================================
 # PATHS
@@ -30,6 +31,7 @@ MAX_WORKERS = 3            # threads for non-selenium tasks
 script_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(script_dir, "Output")
 os.makedirs(output_dir, exist_ok=True)
+
 
 # =================================================
 # INPUT FILE
@@ -61,13 +63,20 @@ for col in COLUMNS:
     df[col] = ""
 
 # =================================================
-# AUTOSAVE FUNCTION
+# AUTOSAVE FUNCTION (Updated to include CSV)
 # =================================================
 def autosave(df, suffix="autosave"):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    path = os.path.join(output_dir, f"{suffix}_{timestamp}_{baseName}.xlsx")
-    df.to_excel(path, index=False)
-    print(f"\n💾 Autosaved: {path}")
+    
+    # Save Excel for human review
+    excel_path = os.path.join(output_dir, f"{suffix}_{timestamp}_{baseName}.xlsx")
+    df.to_excel(excel_path, index=False)
+    
+    # Save CSV for Anki/Recovery (UTF-8 with BOM for Persian/Special chars)
+    csv_path = os.path.join(output_dir, f"{suffix}_{timestamp}_{baseName}.csv")
+    df.to_csv(csv_path, index=False, encoding="utf-8-sig")
+    
+    print(f"\n💾 Autosaved (Excel & CSV): {timestamp}")
 
 # =================================================
 # NON-SELENIUM TASK MAP
