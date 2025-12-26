@@ -4,6 +4,7 @@ import datetime
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from wakepy import keep
+from anki_exporter import generate_anki_package 
 
 from scraper_functions import (
     scrape_and_process_fastdic,
@@ -56,7 +57,8 @@ COLUMNS = [
     #"Processed_Content_Google_Define_Selenium_processed",
     #"Processed_Content_Cambridge_Define_Selenium",
     "Anki_US_Sound_Tag",       
-    "Anki_Front_Field"        
+    "Anki_Front_Field" ,
+    "Info"       
 
 ]
 
@@ -90,7 +92,8 @@ def run_non_selenium_tasks(word, word_number):
         "Downloaded_Images_HTML": download_images(word, word_number, n=4),
         #"Dictionary_com": scrape_and_process_dictionary_com(word, word_number),
         "Thesaurus_com": scrape_and_process_thesaurus_com(word, word_number),
-        "Fastdic_Audio": scrape_and_process_fastdic_audio(word, word_number)
+        "Fastdic_Audio": scrape_and_process_fastdic_audio(word, word_number),
+        "Info": "<a href='https://github.com/mjbahonar/Meaning-Ankidroid'>Create your own Deck here</a>"
     }
 
 # =================================================
@@ -180,8 +183,21 @@ final_csv = os.path.join(
 df.to_excel(final_excel, index=False)
 df.to_csv(final_csv, index=False, encoding="utf-8-sig")
 
+
 print("\n" + "=" * 60)
 print("✅ PROCESS COMPLETED SUCCESSFULLY")
 print(f"Excel saved to: {final_excel}")
 print(f"CSV saved to  : {final_csv}")
 print("=" * 60)
+
+
+# Define paths for the Anki function
+media_folders = [
+    os.path.join(script_dir, "Images"), #
+    os.path.join(script_dir, "Audio")   #
+]
+css_file = os.path.join(script_dir, "Styles", "all.css")
+apkg_output = os.path.join(output_dir, f"output_{timestamp}_{baseName}.apkg") #
+
+# Call the function from the new file
+generate_anki_package(df, apkg_output, media_folders, css_file)

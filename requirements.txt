@@ -17,3 +17,5 @@ deep-translator
 
 Pillow
 pyperclip
+
+genanki
