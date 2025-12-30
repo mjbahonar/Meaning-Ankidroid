@@ -2,7 +2,7 @@
 
 # Automatic Anki Card Generator: The Automated Vocabulary Card Architect
 
-![](Docs/English)
+![](Docs/English.png)
 
 Meaning-Ankidroid is a professional-grade Python utility designed to transform a simple list of words into rich, multimedia-enhanced flashcards. Automating data collection from 7 premium dictionaries and high-quality media sources allows language learners to focus on memorization rather than card creation.
 
