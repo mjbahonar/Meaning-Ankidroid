@@ -5,6 +5,8 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from wakepy import keep
 from anki_exporter import generate_anki_package 
+import warnings
+warnings.filterwarnings("ignore", module="genanki.note")
 
 from scraper_functions import (
     scrape_and_process_fastdic,
@@ -34,11 +36,34 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.join(script_dir, "Output")
 os.makedirs(output_dir, exist_ok=True)
 
+# =================================================
+# INFO
+# =================================================
+info_text = """
+<div class="container text-center" style="max-width: 800px; margin: 40px auto; padding: 20px;">
+    <div class="card">
+        <div class="card-body">
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                This deck was created using <strong>Anki Automatic Word Generator</strong>.
+            </p>
+            <div style="margin: 1.5rem 0;">
+                <a href="https://github.com/mjbahonar/Meaning-Ankidroid" 
+                   target="_blank" 
+                   class="tappable"
+                   ontouchstart=""
+                   style="display: inline-block; padding: .6rem 1.2rem; background: #007bff; color: #fff; border-radius: .35rem; text-decoration: none; font-size: 1.1rem;">
+                    Create your own deck → Just give the app your word list
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+"""
 
 # =================================================
 # INPUT FILE
 # =================================================
-baseName = "words-foundation"
+baseName = "Missing Notes of IELTS Essential"
 excel_file_path = os.path.join(script_dir, baseName + ".xlsx")
 df = pd.read_excel(excel_file_path, header=None, names=["Words"])
 
@@ -93,7 +118,7 @@ def run_non_selenium_tasks(word, word_number):
         #"Dictionary_com": scrape_and_process_dictionary_com(word, word_number),
         "Thesaurus_com": scrape_and_process_thesaurus_com(word, word_number),
         "Fastdic_Audio": scrape_and_process_fastdic_audio(word, word_number),
-        "Info": "<a href='https://github.com/mjbahonar/Meaning-Ankidroid'>Create your own Deck here</a>"
+        "Info": info_text
     }
 
 # =================================================
