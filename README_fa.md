@@ -1,4 +1,4 @@
-🌏 Read me in [English](README.md])
+🌏 Read me in [English](README.md)
 
 # Meaning-Ankidroid: معمار خودکار کارت‌های واژگان
 
